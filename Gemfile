@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gem 'dotenv'
 gem 'sinatra'
-gem 'ruby-trello'
+gem 'ruby-trello', '~> 1.0.4'
 
 # Constraints to work with Ruby 1.8.7
 gem 'activemodel', '~> 3.2.0'

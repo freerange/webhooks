@@ -51,8 +51,8 @@ GEM
       thor
     rest-client (1.6.7)
       mime-types (>= 1.16)
-    ruby-trello (1.1.1)
-      activemodel (>= 3.2.0)
+    ruby-trello (1.0.4)
+      activemodel
       addressable (~> 2.3)
       json
       oauth (~> 0.4.5)
@@ -73,5 +73,5 @@ DEPENDENCIES
   mime-types (~> 1.16.0)
   nokogiri (~> 1.5.0)
   recap
-  ruby-trello
+  ruby-trello (~> 1.0.4)
   sinatra
