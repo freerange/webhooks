@@ -27,7 +27,7 @@ post '/harmonia/assignments' do
   person_name = assignment['person']['name']
   member_id = harmonia_person_names_vs_trello_member_ids[person_name]
 
-  card = Trello::Card.create(name: task_name, list_id: ENV['TRELLO_LIST_ID'], desc: task_instructions, member_ids: [member_id])
+  card = Trello::Card.create(:name => task_name, :list_id => ENV['TRELLO_LIST_ID'], :desc => task_instructions, :member_ids => [member_id])
   card.due = task_due_at
   card.update!
 
