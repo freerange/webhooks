@@ -2,6 +2,7 @@ require 'rubygems'
 require 'bundler/setup'
 
 require 'dotenv'
+require 'rack'
 require 'sinatra'
 require 'trello'
 
