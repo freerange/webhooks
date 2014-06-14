@@ -8,3 +8,7 @@ gem 'ruby-trello'
 gem 'activemodel', '~> 3.2.0'
 gem 'mime-types', '~> 1.16.0'
 gem 'nokogiri', '~> 1.5.0'
+
+group :development do
+  gem 'recap'
+end
