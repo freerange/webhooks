@@ -17,7 +17,7 @@ Trello.configure do |config|
 end
 
 get '/' do
-  200
+  [200, 'OK']
 end
 
 post '/harmonia/assignments' do
@@ -35,5 +35,5 @@ post '/harmonia/assignments' do
   card.due = task_due_at
   card.update!
 
-  200
+  [200, 'OK']
 end
