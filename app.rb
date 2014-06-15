@@ -16,6 +16,10 @@ Trello.configure do |config|
   config.member_token = ENV['TRELLO_TOKEN']
 end
 
+get '/' do
+  200
+end
+
 post '/harmonia/assignments' do
   json = request.body.read
   attributes = JSON.parse(json)
