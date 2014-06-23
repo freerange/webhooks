@@ -19,10 +19,17 @@ namespace :apache do
     sudo "cp #{apache_config} /etc/apache2/sites-available/"
   end
 
+  desc "Make this site available to Apache"
+  task :enable_config do
+    apache.update_config
+    sudo "a2ensite webhooks.gofreerange.com"
+  end
+
   desc "Reload the Apache webserver, particularly useful after updating the Apache config"
   task :reload do
     sudo "service apache2 reload"
   end
 end
 
+after "apache:enable_config", "apache:reload"
 after "apache:update_config", "apache:reload"
