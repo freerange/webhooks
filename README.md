@@ -89,3 +89,11 @@ Ensure you're logged in to Trello as the GFR Admin user. It's safe to run this m
 ## Copy and enable the Apache config file
 
     $ cap apache:enable_config
+
+## Testing the server
+
+Assuming you have something like the harmonia-assignment.example.json in this project.
+
+    $ curl -XPOST -d@harmonia-assignment.example.json http://webhooks.gofreerange.com/harmonia/assignments
+
+You'll see a response containing "OK" if everything is hooked up correctly.
