@@ -2,7 +2,6 @@ require 'recap/recipes/ruby'
 
 set :application, 'webhooks'
 set :repository, 'git@github.com:freerange/webhooks.git'
-set :branch, 'migrating-to-another-server'
 
 server 'badger.gofreerange.com', :app
 
