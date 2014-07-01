@@ -1,15 +1,12 @@
 source "https://rubygems.org"
 
-ruby '1.8.7'
-
 gem 'dotenv'
 gem 'sinatra'
 gem 'ruby-trello', '~> 1.0.4'
 
-# Constraints to work with Ruby 1.8.7
-gem 'activemodel', '~> 3.2.0'
-gem 'mime-types', '~> 1.16.0'
-gem 'nokogiri', '~> 1.5.0'
+gem 'activemodel'
+gem 'mime-types'
+gem 'nokogiri'
 
 group :development do
   gem 'recap'

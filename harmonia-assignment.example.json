@@ -1,0 +1,23 @@
+{
+  "assignment": {
+    "key": "abc123",
+    "created_at": "2014-05-09T21:22:16.519+01:00",
+    "task": {
+      "key": "def456",
+      "name": "Test task assigned by Harmonia",
+      "instructions": "The instructions for the task",
+      "done": false,
+      "due_at": "2014-07-05T17:00:00.000+01:00",
+      "created_at": "2014-05-09T21:22:16.516+01:00"
+    },
+    "person": {
+      "key": "ghi789",
+      "name": "James Mead",
+      "email": "james.mead@gofreerange.com"
+    },
+    "team": {
+      "key": "jkl101",
+      "name": "Team Name"
+    }
+  }
+}
