@@ -85,6 +85,7 @@ Ensure you're logged in to Trello as the GFR Admin user. It's safe to run this m
     $ cap env:set TRELLO_TOKEN=`grep TRELLO_TOKEN .env | cut -d"=" -f2`
     $ cap env:set TRELLO_LIST_ID=`grep TRELLO_LIST_ID .env | cut -d"=" -f2`
     $ cap env:set HARMONIA_PERSON_NAMES_VS_TRELLO_MEMBER_IDS="`grep HARMONIA_PERSON_NAMES_VS_TRELLO_MEMBER_IDS .env | cut -d"=" -f2`"
+    $ can env:set AUTHENTICATION_TOKEN=abc123
 
 ## Copy and enable the Apache config file
 
@@ -94,6 +95,6 @@ Ensure you're logged in to Trello as the GFR Admin user. It's safe to run this m
 
 Assuming you have something like the harmonia-assignment.example.json in this project.
 
-    $ curl -XPOST -d@harmonia-assignment.example.json http://webhooks.gofreerange.com/harmonia/assignments
+    $ curl -XPOST -d@harmonia-assignment.example.json "http://webhooks.gofreerange.com/harmonia/assignments?token=abc123"
 
 You'll see a response containing "OK" if everything is hooked up correctly.

@@ -10,6 +10,7 @@ require 'json'
 Dotenv.load
 
 harmonia_person_names_vs_trello_member_ids = JSON.parse(ENV['HARMONIA_PERSON_NAMES_VS_TRELLO_MEMBER_IDS'])
+authentication_token = ENV['AUTHENTICATION_TOKEN']
 
 Trello.configure do |config|
   config.developer_public_key = ENV['TRELLO_KEY']
@@ -21,19 +22,23 @@ get '/' do
 end
 
 post '/harmonia/assignments' do
-  json = request.body.read
-  attributes = JSON.parse(json)
+  if params[:token] == authentication_token
+    json = request.body.read
+    attributes = JSON.parse(json)
 
-  assignment = attributes['assignment']
-  task, person = assignment['task'], assignment['person']
-  member_id = harmonia_person_names_vs_trello_member_ids[person['name']]
+    assignment = attributes['assignment']
+    task, person = assignment['task'], assignment['person']
+    member_id = harmonia_person_names_vs_trello_member_ids[person['name']]
 
-  unless task['done']
-    card = Trello::Card.create(:name => task['name'], :list_id => ENV['TRELLO_LIST_ID'], :desc => task['instructions'])
-    card.due = task['due_at']
-    card.add_member(Trello::Member.new('id' => member_id))
-    card.update!
+    unless task['done']
+      card = Trello::Card.create(:name => task['name'], :list_id => ENV['TRELLO_LIST_ID'], :desc => task['instructions'])
+      card.due = task['due_at']
+      card.add_member(Trello::Member.new('id' => member_id))
+      card.update!
+    end
+
+    [200, 'OK']
+  else
+    [401, 'Unauthorized']
   end
-
-  [200, 'OK']
 end
