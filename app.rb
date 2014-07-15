@@ -31,11 +31,11 @@ post '/harmonia/assignments' do
   attributes = JSON.parse(json)
 
   assignment = attributes['assignment']
-  task, person, team = assignment['task'], assignment['person'], assignment['team']
+  task, person = assignment['task'], assignment['person']
   member_id = harmonia_person_names_vs_trello_member_ids[person['name']]
 
   unless task['done']
-    task_url = "https://harmonia.io/teams/#{team['key']}/tasks/#{task['key']}"
+    task_url = "https://harmonia.io/t/#{task['key']}"
     description = [task['instructions'], '', "Harmonia task: #{task_url}"].join("\n")
     card = Trello::Card.create(:name => task['name'], :list_id => trello_list_id, :desc => description)
     card.due = task['due_at']
