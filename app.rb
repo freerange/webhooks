@@ -36,16 +36,9 @@ post '/harmonia/assignments' do
 
   unless task['done']
     task_url = "https://harmonia.io/t/#{task['key']}"
-    task_link = "Harmonia task: #{task_url}"
-    list = Trello::List.find(trello_list_id)
-    card = list.cards.detect { |c| c.desc =~ Regexp.new(task_link) }
-    if card
-      card.members.each { |m| card.remove_member(m) }
-    else
-      description = [task['instructions'], '', task_link].join("\n")
-      card = Trello::Card.create(:name => task['name'], :list_id => trello_list_id, :desc => description)
-      card.due = task['due_at']
-    end
+    description = [task['instructions'], '', "Harmonia task: #{task_url}"].join("\n")
+    card = Trello::Card.create(:name => task['name'], :list_id => trello_list_id, :desc => description)
+    card.due = task['due_at']
     card.add_member(Trello::Member.new('id' => member_id))
     card.update!
   end
