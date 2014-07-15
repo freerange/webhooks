@@ -1,10 +1,10 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (4.1.1)
-      activesupport (= 4.1.1)
+    activemodel (4.1.4)
+      activesupport (= 4.1.4)
       builder (~> 3.1)
-    activesupport (4.1.1)
+    activesupport (4.1.4)
       i18n (~> 0.6, >= 0.6.9)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
@@ -22,11 +22,11 @@ GEM
       dotenv-deployment (~> 0.0.2)
     dotenv-deployment (0.0.2)
     highline (1.6.21)
-    i18n (0.6.9)
+    i18n (0.6.11)
     json (1.8.1)
     mime-types (2.3)
     mini_portile (0.6.0)
-    minitest (5.3.5)
+    minitest (5.4.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-sftp (2.1.2)
@@ -47,8 +47,8 @@ GEM
       thor
     rest-client (1.6.7)
       mime-types (>= 1.16)
-    ruby-trello (1.0.4)
-      activemodel
+    ruby-trello (1.1.1)
+      activemodel (>= 3.2.0)
       addressable (~> 2.3)
       json
       oauth (~> 0.4.5)
@@ -72,5 +72,5 @@ DEPENDENCIES
   mime-types
   nokogiri
   recap
-  ruby-trello (~> 1.0.4)
+  ruby-trello
   sinatra

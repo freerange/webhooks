@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gem 'dotenv'
 gem 'sinatra'
-gem 'ruby-trello', '~> 1.0.4'
+gem 'ruby-trello'
 
 gem 'activemodel'
 gem 'mime-types'
