@@ -15,10 +15,12 @@ Dotenv.load
 harmonia_person_names_vs_trello_member_ids = JSON.parse(ENV.fetch('HARMONIA_PERSON_NAMES_VS_TRELLO_MEMBER_IDS'))
 trello_list_id = ENV.fetch('TRELLO_LIST_ID')
 authentication_token = ENV.fetch('AUTHENTICATION_TOKEN')
+trello_key = ENV.fetch('TRELLO_KEY')
+trello_token = ENV.fetch('TRELLO_TOKEN')
 
 Trello.configure do |config|
-  config.developer_public_key = ENV.fetch('TRELLO_KEY')
-  config.member_token = ENV.fetch('TRELLO_TOKEN')
+  config.developer_public_key = trello_key
+  config.member_token = trello_token
 end
 
 get '/' do
@@ -50,7 +52,7 @@ post '/harmonia/assignments' do
       webhook = Trello::Webhook.create(
         :description => "Watch card #{card.id}",
         :id_model => card.id,
-        :callback_url => "http://webhooks.gofreerange.com/trello/events"
+        :callback_url => 'http://webhooks.gofreerange.com/trello/events'
       )
       card.due = task['due_at']
     end
@@ -69,6 +71,8 @@ post '/trello/events' do
   json = request.body.read
   attributes = JSON.parse(json)
   logger.info attributes.inspect
-  logger.info request.env.inspect
+  logger.info request.env['HTTP_X_TRELLO_WEBHOOK']
+  hash = Digest::HMAC.hexdigest(request.body + 'http://webhooks.gofreerange.com/trello/events', trello_token, Digest::SHA1)
+  logger.info hash
   [200, 'OK']
 end
