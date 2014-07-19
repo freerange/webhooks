@@ -21,7 +21,7 @@ trello_secret = ENV.fetch('TRELLO_SECRET')
 host = ENV.fetch('HOST')
 
 trello_events_path = '/trello/events'
-trello_events_url = "http://#{host}#{path}"
+trello_events_url = "http://#{host}#{trello_events_path}"
 
 Trello.configure do |config|
   config.developer_public_key = trello_key
