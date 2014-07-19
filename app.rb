@@ -18,6 +18,10 @@ authentication_token = ENV.fetch('AUTHENTICATION_TOKEN')
 trello_key = ENV.fetch('TRELLO_KEY')
 trello_token = ENV.fetch('TRELLO_TOKEN')
 trello_secret = ENV.fetch('TRELLO_SECRET')
+host = ENV.fetch('HOST')
+
+trello_events_path = '/trello/events'
+trello_events_url = "http://#{host}#{path}"
 
 Trello.configure do |config|
   config.developer_public_key = trello_key
@@ -53,7 +57,7 @@ post '/harmonia/assignments' do
       webhook = Trello::Webhook.create(
         :description => "Watch card #{card.id}",
         :id_model => card.id,
-        :callback_url => 'http://webhooks.gofreerange.com/trello/events'
+        :callback_url => trello_events_url
       )
       card.due = task['due_at']
     end
@@ -64,13 +68,13 @@ post '/harmonia/assignments' do
   [200, 'OK']
 end
 
-head '/trello/events' do
+head trello_events_path do
   [200, 'OK']
 end
 
-post '/trello/events' do
+post trello_events_path do
   body = request.body.read
-  data = body + 'http://webhooks.gofreerange.com/trello/events'
+  data = body + trello_events_url
   hash = OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha1'), trello_secret, data)
   signature = Base64.encode64(hash).chomp
   unless request.env['HTTP_X_TRELLO_WEBHOOK'] == signature
