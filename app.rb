@@ -84,7 +84,7 @@ post trello_events_path do
   json = JSON.parse(body)
   logger.info json.inspect
 
-  if (action = json['action'] && action['type'] == 'updateCard') && (old = action['old'] && old['closed'] == false) && (model = action['model'] && model['closed'] == true)
+  if ((action = json['action']) && (action['type'] == 'updateCard')) && ((data = action['data']) && (old = data['old']) && (old['closed'] == false)) && ((model = action['model']) && (model['closed'] == true))
     logger.info '*** archived ***'
   end
 
