@@ -78,7 +78,7 @@ post '/trello/events' do
 
   data = body + 'http://webhooks.gofreerange.com/trello/events'
   logger.info data
-  hash = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha1'), trello_secret, data)
+  hash = OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha1'), trello_secret, data)
   logger.info hash
   logger.info Base64.encode64(hash)
   [200, 'OK']
