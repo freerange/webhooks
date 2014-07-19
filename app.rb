@@ -6,6 +6,9 @@ require 'sinatra'
 require 'trello'
 
 require 'json'
+require 'logger'
+
+logger = Logger.new('webhooks.log')
 
 Dotenv.load
 
@@ -65,7 +68,7 @@ end
 post '/trello/events' do
   json = request.body.read
   attributes = JSON.parse(json)
-  p attributes
-  p request.env
+  logger.info attributes.inspect
+  logger.info request.env.inspect
   [200, 'OK']
 end
