@@ -72,7 +72,7 @@ post '/trello/events' do
   body = request.body.read
   data = body + 'http://webhooks.gofreerange.com/trello/events'
   hash = OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha1'), trello_secret, data)
-  signature = Base64.encode64(hash)
+  signature = Base64.encode64(hash).chomp
   unless request.env['HTTP_X_TRELLO_WEBHOOK'] == signature
     return [401, 'Unauthorized']
   end
