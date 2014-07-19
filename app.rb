@@ -17,6 +17,7 @@ trello_list_id = ENV.fetch('TRELLO_LIST_ID')
 authentication_token = ENV.fetch('AUTHENTICATION_TOKEN')
 trello_key = ENV.fetch('TRELLO_KEY')
 trello_token = ENV.fetch('TRELLO_TOKEN')
+trello_secret = ENV.fetch('TRELLO_SECRET')
 
 Trello.configure do |config|
   config.developer_public_key = trello_key
@@ -72,7 +73,7 @@ post '/trello/events' do
   json = JSON.parse(body)
   logger.info json.inspect
   logger.info request.env['HTTP_X_TRELLO_WEBHOOK']
-  hash = Digest::HMAC.hexdigest(body + 'http://webhooks.gofreerange.com/trello/events', trello_token, Digest::SHA1)
-  logger.info hash
+  hash = Digest::HMAC.hexdigest(body + 'http://webhooks.gofreerange.com/trello/events', trello_secret, Digest::SHA1)
+  logger.info Base64.encode64(hash)
   [200, 'OK']
 end
