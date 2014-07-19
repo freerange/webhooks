@@ -44,11 +44,28 @@ post '/harmonia/assignments' do
     else
       description = [task['instructions'], '', task_link].join("\n")
       card = Trello::Card.create(:name => task['name'], :list_id => trello_list_id, :desc => description)
+      webhook = Trello::Webhook.create(
+        :description => "Watch card #{card.id}",
+        :id_model => card.id,
+        :callback_url => "http://webhooks.gofreerange.com/trello/events"
+      )
       card.due = task['due_at']
     end
     card.add_member(Trello::Member.new('id' => member_id))
     card.update!
   end
 
+  [200, 'OK']
+end
+
+head '/trello/events' do
+  [200, 'OK']
+end
+
+post '/trello/events' do
+  json = request.body.read
+  attributes = JSON.parse(json)
+  p attributes
+  p request.env
   [200, 'OK']
 end
