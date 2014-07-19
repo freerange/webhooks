@@ -72,8 +72,14 @@ post '/trello/events' do
   body = request.body.read
   json = JSON.parse(body)
   logger.info json.inspect
+  logger.info "\n"
   logger.info request.env['HTTP_X_TRELLO_WEBHOOK']
-  hash = Digest::HMAC.hexdigest(body + 'http://webhooks.gofreerange.com/trello/events', trello_secret, Digest::SHA1)
+  logger.info "\n"
+
+  data = body + 'http://webhooks.gofreerange.com/trello/events'
+  logger.info data
+  hash = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha1'), trello_secret, data)
+  logger.info hash
   logger.info Base64.encode64(hash)
   [200, 'OK']
 end
