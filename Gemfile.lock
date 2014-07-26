@@ -18,6 +18,8 @@ GEM
       net-sftp (>= 2.0.0)
       net-ssh (>= 2.0.14)
       net-ssh-gateway (>= 1.1.0)
+    crack (0.4.2)
+      safe_yaml (~> 1.0.0)
     diff-lcs (1.2.5)
     domain_name (0.5.19)
       unf (>= 0.0.5, < 1.0.0)
@@ -85,6 +87,7 @@ GEM
       json
       oauth (~> 0.4.5)
       rest-client (~> 1.6.7)
+    safe_yaml (1.0.3)
     sinatra (1.4.5)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -97,6 +100,9 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.6)
+    webmock (1.18.0)
+      addressable (>= 2.3.6)
+      crack (>= 0.3.2)
     webrobots (0.1.1)
 
 PLATFORMS
@@ -111,3 +117,4 @@ DEPENDENCIES
   rspec
   ruby-trello
   sinatra
+  webmock
