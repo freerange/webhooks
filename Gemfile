@@ -9,3 +9,7 @@ group :development do
   gem 'rake'
   gem 'recap'
 end
+
+group :test do
+  gem 'rspec'
+end
