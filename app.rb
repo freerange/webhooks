@@ -8,7 +8,7 @@ require 'trello'
 require 'json'
 require 'logger'
 
-logger = Logger.new('webhooks.log')
+logger = Logger.new(File.expand_path('../log/webhooks.log', __FILE__))
 
 Dotenv.load
 
