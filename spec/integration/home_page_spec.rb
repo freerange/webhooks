@@ -1,7 +1,12 @@
 require_relative '../spec_helper'
 
 describe 'home page' do
-  it 'passes' do
-    expect(true).to eq(true)
+  def app
+    Sinatra::Application
+  end
+
+  it 'responds with success status' do
+    get '/'
+    expect(last_response).to be_ok
   end
 end

@@ -58,6 +58,8 @@ GEM
     rack (1.5.2)
     rack-protection (1.5.3)
       rack
+    rack-test (0.6.2)
+      rack (>= 1.0)
     rake (0.9.6)
     recap (1.2.2)
       capistrano (~> 2.9)
@@ -103,6 +105,7 @@ PLATFORMS
 DEPENDENCIES
   dotenv
   mechanize
+  rack-test
   rake
   recap
   rspec
