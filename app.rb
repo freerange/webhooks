@@ -20,8 +20,7 @@ set :trello_token, ENV.fetch('TRELLO_TOKEN')
 set :trello_secret, ENV.fetch('TRELLO_SECRET')
 set :host, ENV.fetch('HOST')
 
-set :trello_events_path, '/trello/events'
-set :trello_events_url, "http://#{settings.host}#{settings.trello_events_path}"
+set :trello_events_url, "http://#{settings.host}/trello/events?token=#{settings.authentication_token}"
 
 Trello.configure do |config|
   config.developer_public_key = settings.trello_key
@@ -68,23 +67,22 @@ post '/harmonia/assignments' do
   [200, 'OK']
 end
 
-head settings.trello_events_path do
+head '/trello/events' do
   [200, 'OK']
 end
 
-post settings.trello_events_path do
-  body = request.body.read
-  data = body + settings.trello_events_url
-  hash = OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha1'), settings.trello_secret, data)
-  signature = Base64.encode64(hash).chomp
-  unless request.env['HTTP_X_TRELLO_WEBHOOK'] == signature
+post '/trello/events' do
+  if params[:token].nil?
+    return [410, 'Gone']
+  end
+  unless params[:token] == settings.authentication_token
     return [401, 'Unauthorized']
   end
 
-  json = JSON.parse(body)
-  logger.info json.inspect
+  json = request.body.read
+  attributes = JSON.parse(json)
 
-  if ((action = json['action']) && (action['type'] == 'updateCard')) && ((data = action['data']) && (old = data['old']) && (old['closed'] == false)) && ((model = json['model']) && (model['closed'] == true))
+  if ((action = attributes['action']) && (action['type'] == 'updateCard')) && ((data = action['data']) && (old = data['old']) && (old['closed'] == false)) && ((model = attributes['model']) && (model['closed'] == true))
     logger.info '*** archived ***'
   end
 
