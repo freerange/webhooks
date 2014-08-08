@@ -30,7 +30,25 @@ Trello.configure do |config|
   config.member_token = settings.trello_token
 end
 
+class Harmonia
+  def mark_as_done(email:, password:, task_url:)
+    agent = Mechanize.new
+    sign_in_page = agent.get("https://harmonia.io/sign-in")
+    sign_in_page.form_with(action: '/session') do |sign_in_form|
+      sign_in_form['email'] = email
+      sign_in_form['password'] = password
+    end.submit
+    task_page = agent.get(task_url)
+    task_page.form_with(action: %r{/done$}).submit
+  end
+end
+
 class WebhooksApp < Sinatra::Application
+  def initialize(harmonia: nil)
+    super
+    @harmonia = harmonia
+  end
+
   get '/' do
     [200, 'OK']
   end
@@ -90,15 +108,8 @@ class WebhooksApp < Sinatra::Application
     attributes = JSON.parse(json)
 
     if ((action = attributes['action']) && (action['type'] == 'updateCard')) && ((data = action['data']) && (old = data['old']) && (old['closed'] == false)) && ((model = attributes['model']) && (model['closed'] == true))
-      agent = Mechanize.new
-      sign_in_page = agent.get("https://harmonia.io/sign-in")
-      sign_in_page.form_with(action: '/session') do |sign_in_form|
-        sign_in_form['email'] = settings.harmonia_email
-        sign_in_form['password'] = settings.harmonia_password
-      end.submit
-      task_page = agent.get(task_url)
-      task_page.form_with(action: %r{/done$}).submit
-     end
+      @harmonia.mark_as_done(email: settings.harmonia_email, password: settings.harmonia_password, task_url: task_url)
+    end
 
     [200, 'OK']
   end

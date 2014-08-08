@@ -1,2 +1,2 @@
 require './app'
-run WebhooksApp.new
+run WebhooksApp.new(harmonia: Harmonia.new)
