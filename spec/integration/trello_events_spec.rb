@@ -10,7 +10,7 @@ describe 'Trello Events' do
   let(:task_url) { "https://harmonia.io/t/#{task_key}" }
   let(:body) { { action: { type: 'updateCard', data: { old: { closed: false } } }, model: { closed: true } }.to_json }
 
-  it 'responds to head request with success status to allow webhook creation' do
+  it 'responds to HEAD request with success status to allow webhook creation' do
     head path
 
     expect(last_response).to be_ok
