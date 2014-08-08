@@ -30,74 +30,74 @@ Trello.configure do |config|
   config.member_token = settings.trello_token
 end
 
-get '/' do
-  [200, 'OK']
-end
-
-post '/harmonia/assignments' do
-  unless params[:token] == settings.authentication_token
-    return [401, 'Unauthorized']
+  get '/' do
+    [200, 'OK']
   end
 
-  json = request.body.read
-  attributes = JSON.parse(json)
-
-  assignment = attributes['assignment']
-  task, person = assignment['task'], assignment['person']
-  member = settings.harmonia_person_names_vs_trello_members[person['name']]
-
-  unless task['done']
-    task_url = "https://harmonia.io/t/#{task['key']}"
-    task_link = "Harmonia task: #{task_url}"
-    list = Trello::List.find(settings.trello_list_id)
-    card = list.cards.detect { |c| c.desc =~ Regexp.new(task_link) }
-    if card
-      card.members.each { |m| card.remove_member(m) }
-    else
-      description = [task['instructions'], '', task_link].join("\n")
-      card = Trello::Card.create(:name => task['name'], :list_id => list.id, :desc => description)
-      webhook = Trello::Webhook.create(
-        :description => "Watch card #{card.id}",
-        :id_model => card.id,
-        :callback_url => "#{settings.trello_events_url}&task_url=#{task_url}"
-      )
-      card.due = task['due_at']
-      card.update!
+  post '/harmonia/assignments' do
+    unless params[:token] == settings.authentication_token
+      return [401, 'Unauthorized']
     end
-    card.add_member(member)
+
+    json = request.body.read
+    attributes = JSON.parse(json)
+
+    assignment = attributes['assignment']
+    task, person = assignment['task'], assignment['person']
+    member = settings.harmonia_person_names_vs_trello_members[person['name']]
+
+    unless task['done']
+      task_url = "https://harmonia.io/t/#{task['key']}"
+      task_link = "Harmonia task: #{task_url}"
+      list = Trello::List.find(settings.trello_list_id)
+      card = list.cards.detect { |c| c.desc =~ Regexp.new(task_link) }
+      if card
+        card.members.each { |m| card.remove_member(m) }
+      else
+        description = [task['instructions'], '', task_link].join("\n")
+        card = Trello::Card.create(:name => task['name'], :list_id => list.id, :desc => description)
+        webhook = Trello::Webhook.create(
+          :description => "Watch card #{card.id}",
+          :id_model => card.id,
+          :callback_url => "#{settings.trello_events_url}&task_url=#{task_url}"
+        )
+        card.due = task['due_at']
+        card.update!
+      end
+      card.add_member(member)
+    end
+
+    [200, 'OK']
   end
 
-  [200, 'OK']
-end
-
-head '/trello/events' do
-  [200, 'OK']
-end
-
-post '/trello/events' do
-  if params[:token].nil?
-    return [410, 'Gone']
-  end
-  unless params[:token] == settings.authentication_token
-    return [401, 'Unauthorized']
-  end
-  unless task_url = params['task_url']
-    return [400, 'Bad Request']
+  head '/trello/events' do
+    [200, 'OK']
   end
 
-  json = request.body.read
-  attributes = JSON.parse(json)
+  post '/trello/events' do
+    if params[:token].nil?
+      return [410, 'Gone']
+    end
+    unless params[:token] == settings.authentication_token
+      return [401, 'Unauthorized']
+    end
+    unless task_url = params['task_url']
+      return [400, 'Bad Request']
+    end
 
-  if ((action = attributes['action']) && (action['type'] == 'updateCard')) && ((data = action['data']) && (old = data['old']) && (old['closed'] == false)) && ((model = attributes['model']) && (model['closed'] == true))
-    agent = Mechanize.new
-    sign_in_page = agent.get("https://harmonia.io/sign-in")
-    sign_in_page.form_with(action: '/session') do |sign_in_form|
-      sign_in_form['email'] = settings.harmonia_email
-      sign_in_form['password'] = settings.harmonia_password
-    end.submit
-    task_page = agent.get(task_url)
-    task_page.form_with(action: %r{/done$}).submit
-   end
+    json = request.body.read
+    attributes = JSON.parse(json)
 
-  [200, 'OK']
-end
+    if ((action = attributes['action']) && (action['type'] == 'updateCard')) && ((data = action['data']) && (old = data['old']) && (old['closed'] == false)) && ((model = attributes['model']) && (model['closed'] == true))
+      agent = Mechanize.new
+      sign_in_page = agent.get("https://harmonia.io/sign-in")
+      sign_in_page.form_with(action: '/session') do |sign_in_form|
+        sign_in_form['email'] = settings.harmonia_email
+        sign_in_form['password'] = settings.harmonia_password
+      end.submit
+      task_page = agent.get(task_url)
+      task_page.form_with(action: %r{/done$}).submit
+     end
+
+    [200, 'OK']
+  end
