@@ -3,6 +3,7 @@ require 'bundler/setup'
 require 'dotenv'
 require 'sinatra'
 require 'trello'
+require 'mechanize'
 
 require 'json'
 require 'logger'
@@ -19,6 +20,8 @@ set :trello_key, ENV.fetch('TRELLO_KEY')
 set :trello_token, ENV.fetch('TRELLO_TOKEN')
 set :trello_secret, ENV.fetch('TRELLO_SECRET')
 set :host, ENV.fetch('HOST')
+set :harmonia_email, ENV.fetch('HARMONIA_EMAIL')
+set :harmonia_password, ENV.fetch('HARMONIA_PASSWORD')
 
 set :trello_events_url, "http://#{settings.host}/trello/events?token=#{settings.authentication_token}"
 
@@ -86,8 +89,15 @@ post '/trello/events' do
   attributes = JSON.parse(json)
 
   if ((action = attributes['action']) && (action['type'] == 'updateCard')) && ((data = action['data']) && (old = data['old']) && (old['closed'] == false)) && ((model = attributes['model']) && (model['closed'] == true))
-    logger.info '*** archived ***'
-  end
+    agent = Mechanize.new
+    sign_in_page = agent.get("https://harmonia.io/sign-in")
+    sign_in_page.form_with(action: '/session') do |sign_in_form|
+      sign_in_form['email'] = settings.harmonia_email
+      sign_in_form['password'] = settings.harmonia_password
+    end.submit
+    task_page = agent.get(task_url)
+    task_page.form_with(action: %r{/done$}).submit
+   end
 
   [200, 'OK']
 end
