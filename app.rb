@@ -8,6 +8,8 @@ require 'mechanize'
 require 'json'
 require 'logger'
 
+require_relative 'harmonia'
+
 logger = Logger.new(File.expand_path('../log/webhooks.log', __FILE__))
 
 Dotenv.load
@@ -28,19 +30,6 @@ set :trello_events_url, "http://#{settings.host}/trello/events?token=#{settings.
 Trello.configure do |config|
   config.developer_public_key = settings.trello_key
   config.member_token = settings.trello_token
-end
-
-class Harmonia
-  def mark_as_done(email:, password:, task_url:)
-    agent = Mechanize.new
-    sign_in_page = agent.get("https://harmonia.io/sign-in")
-    sign_in_page.form_with(action: '/session') do |sign_in_form|
-      sign_in_form['email'] = email
-      sign_in_form['password'] = password
-    end.submit
-    task_page = agent.get(task_url)
-    task_page.form_with(action: %r{/done$}).submit
-  end
 end
 
 class WebhooksApp < Sinatra::Application
