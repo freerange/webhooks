@@ -25,7 +25,7 @@ describe 'Harmonia Assignments' do
   end
 
   it 'creates a new Trello webhook to monitor the newly created Trello card' do
-    expect(Trello::Webhook).to receive(:create).with(include(id_model: card.id, callback_url: app.settings.trello_events_url))
+    expect(Trello::Webhook).to receive(:create).with(include(id_model: card.id, callback_url: "#{app.settings.trello_events_url}&task_url=#{task_url}"))
 
     post path, body
   end

@@ -56,7 +56,7 @@ post '/harmonia/assignments' do
       webhook = Trello::Webhook.create(
         :description => "Watch card #{card.id}",
         :id_model => card.id,
-        :callback_url => settings.trello_events_url
+        :callback_url => "#{settings.trello_events_url}&task_url=#{task_url}"
       )
       card.due = task['due_at']
       card.update!
@@ -77,6 +77,9 @@ post '/trello/events' do
   end
   unless params[:token] == settings.authentication_token
     return [401, 'Unauthorized']
+  end
+  unless task_url = params['task_url']
+    return [400, 'Bad Request']
   end
 
   json = request.body.read

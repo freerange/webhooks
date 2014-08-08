@@ -4,6 +4,7 @@ gem 'dotenv'
 gem 'sinatra'
 gem 'ruby-trello'
 gem 'mechanize'
+gem 'addressable'
 
 group :development do
   gem 'rake'
