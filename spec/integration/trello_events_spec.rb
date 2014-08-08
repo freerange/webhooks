@@ -3,7 +3,7 @@ require_relative '../spec_helper'
 require 'addressable/uri'
 
 describe 'Trello Events' do
-  let(:app) { Sinatra::Application }
+  let(:app) { WebhooksApp.new }
   let(:authentication_token) { app.settings.authentication_token }
   let(:harmonia_credentials) { { email: app.settings.harmonia_email, password: app.settings.harmonia_password } }
   let(:team_key) { 'h54uvc' }

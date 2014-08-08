@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 describe 'Harmonia Assignments' do
-  let(:app) { Sinatra::Application }
+  let(:app) { WebhooksApp.new }
   let(:authentication_token) { app.settings.authentication_token }
   let(:person) { { name: 'James Mead' } }
   let(:task) { { name: 'task-name', key: 'abc123', instructions: 'task-instructions', due_at: "2014-07-05T17:00:00.000+01:00", done: false } }

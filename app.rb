@@ -30,6 +30,7 @@ Trello.configure do |config|
   config.member_token = settings.trello_token
 end
 
+class WebhooksApp < Sinatra::Application
   get '/' do
     [200, 'OK']
   end
@@ -101,3 +102,4 @@ end
 
     [200, 'OK']
   end
+end

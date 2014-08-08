@@ -2,7 +2,7 @@ require_relative '../spec_helper'
 
 describe 'home page' do
   def app
-    Sinatra::Application
+    WebhooksApp.new
   end
 
   it 'responds with success status' do
