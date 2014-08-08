@@ -30,6 +30,86 @@ describe 'Trello Events' do
     expect(last_response).to be_ok
   end
 
+  context "event action is not 'updateCard'" do
+    let(:body) { { action: { type: 'deleteCard' } }.to_json }
+
+    it 'does not mark Harmonia task as done' do
+      expect(harmonia).not_to receive(:mark_as_done)
+
+      post path, body
+    end
+
+    it 'responds to POST request with success status' do
+      post path, body
+
+      expect(last_response).to be_ok
+    end
+  end
+
+  context "event action is missing 'data' attribute" do
+    let(:body) { { action: { type: 'updateCard' }, model: { closed: true } }.to_json }
+
+    it 'does not mark Harmonia task as done' do
+      expect(harmonia).not_to receive(:mark_as_done)
+
+      post path, body
+    end
+
+    it 'responds to POST request with success status' do
+      post path, body
+
+      expect(last_response).to be_ok
+    end
+  end
+
+  context "event action is missing 'model' attribute" do
+    let(:body) { { action: { type: 'updateCard', data: { old: { closed: false } } } }.to_json }
+
+    it 'does not mark Harmonia task as done' do
+      expect(harmonia).not_to receive(:mark_as_done)
+
+      post path, body
+    end
+
+    it 'responds to POST request with success status' do
+      post path, body
+
+      expect(last_response).to be_ok
+    end
+  end
+
+  context 'card was already archived' do
+    let(:body) { { action: { type: 'updateCard', data: { old: { closed: true } } }, model: { closed: true } }.to_json }
+
+    it 'does not mark Harmonia task as done' do
+      expect(harmonia).not_to receive(:mark_as_done)
+
+      post path, body
+    end
+
+    it 'responds to POST request with success status' do
+      post path, body
+
+      expect(last_response).to be_ok
+    end
+  end
+
+  context 'card was not archived' do
+    let(:body) { { action: { type: 'updateCard', data: { old: { closed: false } } }, model: { closed: false } }.to_json }
+
+    it 'does not mark Harmonia task as done' do
+      expect(harmonia).not_to receive(:mark_as_done)
+
+      post path, body
+    end
+
+    it 'responds to POST request with success status' do
+      post path, body
+
+      expect(last_response).to be_ok
+    end
+  end
+
   context 'missing task url' do
     let(:task_url) { nil }
 
