@@ -9,6 +9,7 @@ require 'json'
 require 'logger'
 
 require_relative 'harmonia'
+require_relative 'trello_event'
 
 logger = Logger.new(File.expand_path('../log/webhooks.log', __FILE__))
 
@@ -30,34 +31,6 @@ set :trello_events_url, "http://#{settings.host}/trello/events?token=#{settings.
 Trello.configure do |config|
   config.developer_public_key = settings.trello_key
   config.member_token = settings.trello_token
-end
-
-class TrelloEvent
-  def initialize(attributes)
-    @attributes = attributes
-  end
-
-  def action
-    @attributes['action'] || {}
-  end
-
-  def data
-    action['data'] || {}
-  end
-
-  def old_data
-    data['old'] || {}
-  end
-
-  def model
-    @attributes['model'] || {}
-  end
-
-  def card_archived?
-    (action['type'] == 'updateCard') &&
-      (old_data['closed'] == false) &&
-      (model['closed'] == true)
-  end
 end
 
 class WebhooksApp < Sinatra::Application
