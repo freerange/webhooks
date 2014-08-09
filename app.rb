@@ -32,6 +32,34 @@ Trello.configure do |config|
   config.member_token = settings.trello_token
 end
 
+class TrelloEvent
+  def initialize(attributes)
+    @attributes = attributes
+  end
+
+  def action
+    @attributes['action'] || {}
+  end
+
+  def data
+    action['data'] || {}
+  end
+
+  def old_data
+    data['old'] || {}
+  end
+
+  def model
+    @attributes['model'] || {}
+  end
+
+  def card_archived?
+    (action['type'] == 'updateCard') &&
+      (old_data['closed'] == false) &&
+      (model['closed'] == true)
+  end
+end
+
 class WebhooksApp < Sinatra::Application
   def initialize(harmonia: nil)
     super
@@ -94,9 +122,9 @@ class WebhooksApp < Sinatra::Application
     end
 
     json = request.body.read
-    attributes = JSON.parse(json)
+    event = TrelloEvent.new(JSON.parse(json))
 
-    if ((action = attributes['action']) && (action['type'] == 'updateCard')) && ((data = action['data']) && (old = data['old']) && (old['closed'] == false)) && ((model = attributes['model']) && (model['closed'] == true))
+    if event.card_archived?
       @harmonia.mark_as_done(email: settings.harmonia_email, password: settings.harmonia_password, task_url: task_url)
     end
 
