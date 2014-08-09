@@ -99,6 +99,9 @@ class WebhooksApp < Sinatra::Application
 
     if event.card_archived?
       @harmonia.mark_as_done(email: settings.harmonia_email, password: settings.harmonia_password, task_url: task_url)
+
+      card = Trello::Card.find(event.model['id'])
+      card.add_comment("Harmonia task marked as done: #{task_url}")
     end
 
     [200, 'OK']
