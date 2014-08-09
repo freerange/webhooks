@@ -8,8 +8,8 @@ require 'mechanize'
 require 'json'
 require 'logger'
 
-require_relative 'harmonia'
-require_relative 'trello_event'
+require_relative 'lib/harmonia'
+require_relative 'lib/trello_event'
 
 logger = Logger.new(File.expand_path('../log/webhooks.log', __FILE__))
 
