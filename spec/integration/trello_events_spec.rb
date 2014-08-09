@@ -10,133 +10,73 @@ describe 'Trello Events' do
   let(:task_url) { "https://harmonia.io/t/#{task_key}" }
   let(:body) { { action: { type: 'updateCard', data: { old: { closed: false } } }, model: { closed: true } }.to_json }
 
-  it 'responds to HEAD request with success status to allow webhook creation' do
-    head path
-
-    expect(last_response).to be_ok
-  end
-
-  it 'marks Harmonia task as done' do
-    expect(harmonia).to receive(:mark_as_done).with(email: app.settings.harmonia_email, password: app.settings.harmonia_password, task_url: task_url)
-
-    post path, body
-  end
-
-  it 'responds to POST request with success status' do
-    allow(harmonia).to receive(:mark_as_done)
-
-    post path, body
-
-    expect(last_response).to be_ok
-  end
-
-  context "event action is not 'updateCard'" do
-    let(:body) { { action: { type: 'deleteCard' } }.to_json }
-
-    it 'does not mark Harmonia task as done' do
-      expect(harmonia).not_to receive(:mark_as_done)
-
-      post path, body
-    end
-
-    it 'responds to POST request with success status' do
-      post path, body
+  context 'HEAD request' do
+    it 'responds with success status to allow webhook creation' do
+      head path
 
       expect(last_response).to be_ok
     end
   end
 
-  context "event action is missing 'data' attribute" do
-    let(:body) { { action: { type: 'updateCard' }, model: { closed: true } }.to_json }
-
-    it 'does not mark Harmonia task as done' do
-      expect(harmonia).not_to receive(:mark_as_done)
+  context 'POST request' do
+    it 'marks Harmonia task as done' do
+      expect(harmonia).to receive(:mark_as_done).with(email: app.settings.harmonia_email, password: app.settings.harmonia_password, task_url: task_url)
 
       post path, body
     end
 
-    it 'responds to POST request with success status' do
+    it 'responds with success status' do
+      allow(harmonia).to receive(:mark_as_done)
+
       post path, body
 
       expect(last_response).to be_ok
     end
-  end
 
-  context "event action is missing 'model' attribute" do
-    let(:body) { { action: { type: 'updateCard', data: { old: { closed: false } } } }.to_json }
+    context 'event is not about card being archived' do
+      let(:body) { { action: { type: 'deleteCard' } }.to_json }
 
-    it 'does not mark Harmonia task as done' do
-      expect(harmonia).not_to receive(:mark_as_done)
+      it 'does not mark Harmonia task as done' do
+        expect(harmonia).not_to receive(:mark_as_done)
 
-      post path, body
+        post path, body
+      end
+
+      it 'responds with success status' do
+        post path, body
+
+        expect(last_response).to be_ok
+      end
     end
 
-    it 'responds to POST request with success status' do
-      post path, body
+    context 'missing task url' do
+      let(:task_url) { nil }
 
-      expect(last_response).to be_ok
-    end
-  end
+      it 'responds with 400 Bad Request' do
+        post path, body
 
-  context 'card was already archived' do
-    let(:body) { { action: { type: 'updateCard', data: { old: { closed: true } } }, model: { closed: true } }.to_json }
-
-    it 'does not mark Harmonia task as done' do
-      expect(harmonia).not_to receive(:mark_as_done)
-
-      post path, body
+        expect(last_response.status).to eq(400)
+      end
     end
 
-    it 'responds to POST request with success status' do
-      post path, body
+    context 'incorrect authentication token' do
+      let(:authentication_token) { app.settings.authentication_token + '-incorrect' }
 
-      expect(last_response).to be_ok
-    end
-  end
+      it 'responds with 401 Unauthorized' do
+        post path, body
 
-  context 'card was not archived' do
-    let(:body) { { action: { type: 'updateCard', data: { old: { closed: false } } }, model: { closed: false } }.to_json }
-
-    it 'does not mark Harmonia task as done' do
-      expect(harmonia).not_to receive(:mark_as_done)
-
-      post path, body
+        expect(last_response.status).to eq(401)
+      end
     end
 
-    it 'responds to POST request with success status' do
-      post path, body
+    context 'missing authentication token' do
+      let(:authentication_token) { nil }
 
-      expect(last_response).to be_ok
-    end
-  end
+      it 'responds with 410 Gone so old webhooks are deleted' do
+        post path, body
 
-  context 'missing task url' do
-    let(:task_url) { nil }
-
-    it 'responds with 400 Bad Request' do
-      post path, body
-
-      expect(last_response.status).to eq(400)
-    end
-  end
-
-  context 'incorrect authentication token' do
-    let(:authentication_token) { app.settings.authentication_token + '-incorrect' }
-
-    it 'responds with 401 Unauthorized' do
-      post path, body
-
-      expect(last_response.status).to eq(401)
-    end
-  end
-
-  context 'missing authentication token' do
-    let(:authentication_token) { nil }
-
-    it 'responds with 410 Gone so old webhooks are deleted' do
-      post path, body
-
-      expect(last_response.status).to eq(410)
+        expect(last_response.status).to eq(410)
+      end
     end
   end
 
