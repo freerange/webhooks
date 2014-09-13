@@ -6,12 +6,9 @@ require 'trello'
 require 'mechanize'
 
 require 'json'
-require 'logger'
 
 require_relative 'lib/harmonia'
 require_relative 'lib/trello_event'
-
-logger = Logger.new(File.expand_path('../log/webhooks.log', __FILE__))
 
 Dotenv.load
 
