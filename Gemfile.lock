@@ -11,6 +11,9 @@ GEM
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
     addressable (2.3.6)
+    airbrake (4.1.0)
+      builder
+      multi_json
     builder (3.2.2)
     capistrano (2.15.5)
       highline
@@ -43,6 +46,7 @@ GEM
     mime-types (2.3)
     mini_portile (0.6.0)
     minitest (5.4.0)
+    multi_json (1.10.1)
     net-http-digest_auth (1.4)
     net-http-persistent (2.9.4)
     net-scp (1.2.1)
@@ -110,6 +114,7 @@ PLATFORMS
 
 DEPENDENCIES
   addressable
+  airbrake
   dotenv
   mechanize
   rack-test

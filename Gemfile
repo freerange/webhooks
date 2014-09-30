@@ -5,6 +5,7 @@ gem 'sinatra'
 gem 'ruby-trello'
 gem 'mechanize'
 gem 'addressable'
+gem 'airbrake'
 
 group :development do
   gem 'rake'

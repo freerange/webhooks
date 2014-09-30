@@ -4,6 +4,7 @@ require 'dotenv'
 require 'sinatra'
 require 'trello'
 require 'mechanize'
+require 'airbrake'
 
 require 'json'
 
@@ -28,6 +29,16 @@ set :trello_events_url, "http://#{settings.host}/trello/events?token=#{settings.
 Trello.configure do |config|
   config.developer_public_key = settings.trello_key
   config.member_token = settings.trello_token
+end
+
+configure :production do
+  Airbrake.configure do |config|
+    config.api_key = ENV.fetch('AIRBRAKE_API_KEY')
+    config.host    = ENV.fetch('AIRBRAKE_HOST')
+    config.port    = 80
+    config.secure  = config.port == 443
+  end
+  use Airbrake::Sinatra
 end
 
 class WebhooksApp < Sinatra::Application

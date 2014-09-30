@@ -87,6 +87,14 @@ Ensure you're logged in to Trello as the GFR Admin user. It's safe to run this m
     $ cap env:set HARMONIA_PERSON_NAMES_VS_TRELLO_MEMBER_IDS="`grep HARMONIA_PERSON_NAMES_VS_TRELLO_MEMBER_IDS .env | cut -d"=" -f2`"
     $ cap env:set AUTHENTICATION_TOKEN=abc123
 
+## Configure Airbrake
+
+* Obtain an Airbrake API key for the application e.g. from an instance the Errbit app.
+* Set the following environment variables for the production environment.
+
+    $ cap env:set AIRBRAKE_HOST=<airbrake-host>
+    $ cap env:set AIRBRAKE_API_KEY=<airbrake-api-key>
+
 ## Copy and enable the Apache config file
 
     $ cap apache:enable_config
