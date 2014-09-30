@@ -43,7 +43,7 @@ end
 
 class WebhooksApp < Sinatra::Application
   def initialize(harmonia: nil)
-    super
+    super(nil)
     @harmonia = harmonia
   end
 
