@@ -79,6 +79,7 @@ class WebhooksApp < Sinatra::Application
           :callback_url => "#{settings.trello_events_url}&task_url=#{task_url}"
         )
         card.due = task['due_at']
+        card.pos = 'top'
         card.update!
       end
       card.add_member(member)

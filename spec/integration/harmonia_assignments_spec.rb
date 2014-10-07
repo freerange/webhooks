@@ -32,6 +32,7 @@ describe 'Harmonia Assignments' do
 
   it 'updates the newly created Trello card corresponding to the Harmonia task' do
     expect(card).to receive(:due=).with(task[:due_at])
+    expect(card).to receive(:pos=).with('top')
     expect(card).to receive(:update!)
 
     post path, body
