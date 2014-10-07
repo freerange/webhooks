@@ -104,6 +104,7 @@ class WebhooksApp < Sinatra::Application
     end
 
     json = request.body.read
+    puts json
     event = TrelloEvent.new(JSON.parse(json))
 
     if event.card_archived?
