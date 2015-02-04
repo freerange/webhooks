@@ -37,6 +37,7 @@ configure :production do
     config.host    = ENV.fetch('AIRBRAKE_HOST')
     config.port    = 443
     config.secure  = config.port == 443
+    config.ignore << 'Sinatra::NotFound'
   end
   use Airbrake::Sinatra
 end
