@@ -49,7 +49,7 @@ class WebhooksApp < Sinatra::Application
   end
 
   get '/' do
-    [200, "LANG=#{ENV['LANG']}"]
+    [200, 'OK']
   end
 
   post '/harmonia/assignments' do
