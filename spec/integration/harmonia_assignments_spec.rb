@@ -14,6 +14,7 @@ describe 'Harmonia Assignments' do
 
   before do
     allow(Trello::List).to receive(:find).and_return(list)
+    allow(list).to receive(:refresh!).and_return(list)
     allow(Trello::Card).to receive(:create).and_return(card)
     allow(Trello::Webhook).to receive(:create)
   end

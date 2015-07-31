@@ -82,7 +82,7 @@ class WebhooksApp < Sinatra::Application
         )
         card.due = task['due_at']
         card.update!
-        TrelloCardSorter.new(list).sort!
+        TrelloCardSorter.new(list.refresh!).sort!
       end
       card.add_member(member)
     end
