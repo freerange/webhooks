@@ -32,7 +32,6 @@ describe 'Harmonia Assignments' do
 
   it 'updates the newly created Trello card corresponding to the Harmonia task' do
     expect(card).to receive(:due=).with(task[:due_at])
-    expect(card).to receive(:pos=).with('top')
     expect(card).to receive(:update!)
 
     post path, body
@@ -45,13 +44,21 @@ describe 'Harmonia Assignments' do
     post path, body
   end
 
+  it 'sorts the cards into chronological order' do
+    trello_card_sorter = double(:trello_card_sorter)
+    allow(TrelloCardSorter).to receive(:new).and_return(trello_card_sorter)
+    expect(trello_card_sorter).to receive(:sort!)
+
+    post path, body
+  end
+
   it 'responds with 200 OK' do
     post path, body
 
     expect(last_response.status).to eq(200)
   end
 
-  context 'Trello card already exists' do
+  context 'Trello card for task already exists' do
     let(:member_one) { double(:member) }
     let(:member_two) { double(:member) }
     let(:existing_card) { double(:existing_card, desc: task_link, members: [member_one, member_two]) }
