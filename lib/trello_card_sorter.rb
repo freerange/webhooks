@@ -6,9 +6,8 @@ class TrelloCardSorter
   end
 
   def sort!
-    cards_ordered_by_due_date = @trello_list.cards.sort_by { |c| c.due || THE_END_OF_DAYS }
-    cards_ordered_by_due_date.each.with_index do |card, index|
-      card.pos = index
+    @trello_list.cards.select(&:due).sort_by(&:due).reverse.each do |card|
+      card.pos = 'top'
       card.update!
     end
   end

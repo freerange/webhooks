@@ -8,15 +8,14 @@ describe 'Trello Card Sorter' do
 
   subject { TrelloCardSorter.new(trello_list) }
 
-  it 'sort cards into chronological order' do
-    expect(card_due_earlier).to receive(:pos=).with(0)
-    expect(card_due_earlier).to receive(:update!).ordered
-
-    expect(card_due_later).to receive(:pos=).with(1)
+  it 'moves cards with earliest due dates nearest the top' do
+    expect(card_due_later).to receive(:pos=).with('top')
     expect(card_due_later).to receive(:update!).ordered
 
-    expect(card_not_due).to receive(:pos=).with(2).ordered
-    expect(card_not_due).to receive(:update!).ordered
+    expect(card_due_earlier).to receive(:pos=).with('top')
+    expect(card_due_earlier).to receive(:update!).ordered
+
+    expect(card_not_due).not_to receive(:update!)
 
     subject.sort!
   end
