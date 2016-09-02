@@ -50,7 +50,11 @@ class WebhooksApp < Sinatra::Application
   end
 
   get '/' do
-    [200, 'OK']
+    if params[:error]
+      raise params[:error]
+    else
+      [200, 'OK']
+    end
   end
 
   post '/harmonia/assignments' do
