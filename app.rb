@@ -79,7 +79,7 @@ class WebhooksApp < Sinatra::Application
       else
         description = [task['instructions'], '', task_link].join("\n")
         card = Trello::Card.create(:name => task['name'], :list_id => list.id, :desc => description)
-        webhook = Trello::Webhook.create(
+        Trello::Webhook.create(
           :description => "Watch card #{card.id}",
           :id_model => card.id,
           :callback_url => "#{settings.trello_events_url}&task_url=#{task_url}"
