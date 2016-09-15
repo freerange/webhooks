@@ -72,23 +72,49 @@ class WebhooksApp < Sinatra::Application
     unless task['done']
       task_url = "https://harmonia.io/t/#{task['key']}"
       task_link = "Harmonia task: #{task_url}"
-      list = Trello::List.find(settings.trello_list_id)
+      begin
+        list = Trello::List.find(settings.trello_list_id)
+      rescue Trello::Error
+        raise "Error finding Trello::List for ID: #{settings.trello_list_id}"
+      end
       card = list.cards.detect { |c| c.desc =~ Regexp.new(task_link) }
       if card
-        card.members.each { |m| card.remove_member(m) }
+        card.members.each do |m|
+          begin
+            card.remove_member(m)
+          rescue Trello::Error
+            raise "Error removing #{member.username} from Trello::Card with URL: #{card.short_url}"
+          end
+        end
       else
         description = [task['instructions'], '', task_link].join("\n")
-        card = Trello::Card.create(:name => task['name'], :list_id => list.id, :desc => description)
-        Trello::Webhook.create(
-          :description => "Watch card #{card.id}",
-          :id_model => card.id,
-          :callback_url => "#{settings.trello_events_url}&task_url=#{task_url}"
-        )
+        begin
+          card = Trello::Card.create(:name => task['name'], :list_id => list.id, :desc => description)
+        rescue Trello::Error
+          raise "Error creating Trello::Card with name: #{task['name']}"
+        end
+        begin
+          Trello::Webhook.create(
+            :description => "Watch card #{card.id}",
+            :id_model => card.id,
+            :callback_url => "#{settings.trello_events_url}&task_url=#{task_url}"
+          )
+        rescue Trello::Error
+          raise "Error creating Trello::Webhook for Trello::Card with URL: #{card.short_url}"
+        end
         card.due = task['due_at']
-        card.update!
+        begin
+          card.update!
+        rescue Trello::Error
+          raise "Error setting due date on Trello::Card with URL: #{card.short_url}"
+        end
         TrelloCardSorter.new(list.refresh!).sort!
       end
-      card.add_member(member)
+      begin
+        card.add_member(member)
+      rescue Trello::Error
+        raise "Error adding #{member.username} to Trello::Card with URL: #{card.short_url}"
+      end
     end
 
     [200, 'OK']
@@ -119,7 +145,8 @@ class WebhooksApp < Sinatra::Application
       begin
         card = Trello::Card.find(event.model['id'])
         card.add_comment("Harmonia task marked as done: #{task_url}")
-      rescue Trello::Error => e
+      rescue Trello::Error
+        e = RuntimeError.new("Error adding comment to Trello::Card with URL: #{card.short_url}")
         Airbrake.notify_or_ignore(e, parameters: params, cgi_data: settings.environment)
       end
     end

@@ -8,7 +8,11 @@ class TrelloCardSorter
   def sort!
     @trello_list.cards.select(&:due).sort_by(&:due).reverse.each do |card|
       card.pos = 'top'
-      card.update!
+      begin
+        card.update!
+      rescue Trello::Error
+        raise "Error setting position Trello::Card with URL: #{card.short_url}"
+      end
     end
   end
 end
