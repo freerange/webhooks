@@ -82,11 +82,7 @@ class WebhooksApp < Sinatra::Application
       update_card(card, :due => task['due_at'])
       TrelloCardSorter.new(list.refresh!).sort!
     end
-    begin
-      card.add_member(member)
-    rescue Trello::Error
-      raise "Error adding #{member.username} to Trello::Card with URL: #{card.short_url}"
-    end
+    add_member_to_card(member, card)
 
     [200, 'OK']
   end
@@ -157,5 +153,11 @@ class WebhooksApp < Sinatra::Application
     card.update!
   rescue Trello::Error
     raise "Error setting due date on Trello::Card with URL: #{card.short_url}"
+  end
+
+  def add_member_to_card(member, card)
+    card.add_member(member)
+  rescue Trello::Error
+    raise "Error adding #{member.username} to Trello::Card with URL: #{card.short_url}"
   end
 end
