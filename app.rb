@@ -72,11 +72,6 @@ class WebhooksApp < Sinatra::Application
     return if task['done']
     task_url = "https://harmonia.io/t/#{task['key']}"
     task_link = "Harmonia task: #{task_url}"
-    begin
-      list = Trello::List.find(settings.trello_list_id)
-    rescue Trello::Error
-      raise "Error finding Trello::List for ID: #{settings.trello_list_id}"
-    end
     card = list.cards.detect { |c| c.desc =~ Regexp.new(task_link) }
     if card
       card.members.each do |m|
@@ -151,5 +146,13 @@ class WebhooksApp < Sinatra::Application
     end
 
     [200, 'OK']
+  end
+
+  private
+
+  def list
+    @list ||= Trello::List.find(settings.trello_list_id)
+  rescue Trello::Error
+    raise "Error finding Trello::List for ID: #{settings.trello_list_id}"
   end
 end
