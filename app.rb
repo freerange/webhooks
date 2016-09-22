@@ -74,13 +74,7 @@ class WebhooksApp < Sinatra::Application
     task_link = "Harmonia task: #{task_url}"
     card = list.cards.detect { |c| c.desc =~ Regexp.new(task_link) }
     if card
-      card.members.each do |m|
-        begin
-          card.remove_member(m)
-        rescue Trello::Error
-          raise "Error removing #{member.username} from Trello::Card with URL: #{card.short_url}"
-        end
-      end
+      card.members.each { |m| remove_member_from_card(m, card) }
     else
       description = [task['instructions'], '', task_link].join("\n")
       begin
@@ -154,5 +148,11 @@ class WebhooksApp < Sinatra::Application
     @list ||= Trello::List.find(settings.trello_list_id)
   rescue Trello::Error
     raise "Error finding Trello::List for ID: #{settings.trello_list_id}"
+  end
+
+  def remove_member_from_card(member, card)
+    card.remove_member(member)
+  rescue Trello::Error
+    raise "Error removing #{member.username} from Trello::Card with URL: #{card.short_url}"
   end
 end
