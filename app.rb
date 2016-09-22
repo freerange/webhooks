@@ -79,12 +79,7 @@ class WebhooksApp < Sinatra::Application
       description = [task['instructions'], '', task_link].join("\n")
       card = create_card(:name => task['name'], :list_id => list.id, :desc => description)
       create_webhook_for_card(card, :callback_url => "#{settings.trello_events_url}&task_url=#{task_url}")
-      card.due = task['due_at']
-      begin
-        card.update!
-      rescue Trello::Error
-        raise "Error setting due date on Trello::Card with URL: #{card.short_url}"
-      end
+      update_card(card, :due => task['due_at'])
       TrelloCardSorter.new(list.refresh!).sort!
     end
     begin
@@ -155,5 +150,12 @@ class WebhooksApp < Sinatra::Application
     Trello::Webhook.create(attributes)
   rescue Trello::Error
     raise "Error creating Trello::Webhook for Trello::Card with URL: #{card.short_url}"
+  end
+
+  def update_card(card, attributes)
+    attributes.each { |k, v| card.send("#{k}=", v) }
+    card.update!
+  rescue Trello::Error
+    raise "Error setting due date on Trello::Card with URL: #{card.short_url}"
   end
 end
