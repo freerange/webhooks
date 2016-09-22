@@ -16,6 +16,7 @@ Dotenv.load
 
 harmonia_person_names_vs_trello_member_ids = JSON.parse(ENV.fetch('HARMONIA_PERSON_NAMES_VS_TRELLO_MEMBER_IDS'))
 set :harmonia_person_names_vs_trello_members, Hash[harmonia_person_names_vs_trello_member_ids.map { |name, id| [name, Trello::Member.new('id' => id)] }]
+set :trello_board_id, ENV.fetch('TRELLO_BOARD_ID')
 set :trello_list_id, ENV.fetch('TRELLO_LIST_ID')
 set :authentication_token, ENV.fetch('AUTHENTICATION_TOKEN')
 set :trello_key, ENV.fetch('TRELLO_KEY')
@@ -72,7 +73,7 @@ class WebhooksApp < Sinatra::Application
     return if task['done']
     task_url = "https://harmonia.io/t/#{task['key']}"
     task_link = "Harmonia task: #{task_url}"
-    card = list.cards.detect { |c| c.desc =~ Regexp.new(task_link) }
+    card = board.cards.detect { |c| c.desc =~ Regexp.new(task_link) }
     if card
       card.members.each { |m| remove_member_from_card(m, card) }
     else
@@ -122,6 +123,12 @@ class WebhooksApp < Sinatra::Application
   end
 
   private
+
+  def board
+    @board ||= Trello::Board.find(settings.trello_board_id)
+  rescue Trello::Error
+    raise "Error finding Trello::Board for ID: #{settings.trello_board_id}"
+  end
 
   def list
     @list ||= Trello::List.find(settings.trello_list_id)

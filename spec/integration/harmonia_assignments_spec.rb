@@ -9,10 +9,12 @@ describe 'Harmonia Assignments' do
   let(:task_link) { "Harmonia task: #{task_url}" }
   let(:body) { { assignment: { task: task, person: person } }.to_json }
   let(:cards) { [] }
+  let(:board) { double(:trello_board, id: app.settings.trello_board_id, cards: cards) }
   let(:list) { double(:trello_list, id: app.settings.trello_list_id, cards: cards) }
   let(:card) { double(:trello_card, id: 'def456').as_null_object }
 
   before do
+    allow(Trello::Board).to receive(:find).and_return(board)
     allow(Trello::List).to receive(:find).and_return(list)
     allow(list).to receive(:refresh!).and_return(list)
     allow(Trello::Card).to receive(:create).and_return(card)

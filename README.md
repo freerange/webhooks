@@ -3,11 +3,14 @@
 ## Getting the ID of the Trello board we're interested in
 
     $ open https://trello.com
-    # Navigate to the board you want to backup and copy the board ID from the URL
+    # Navigate to the board you want to use and copy the board ID from the URL
     # The structure of the URL should be trello.com/b/<board-ID>/<board-name>
 
     # Temporarily store the Trello board ID in an environment variable
     $ export TRELLO_BOARD_ID=`pbpaste`
+
+    # Store the Trello board ID in .env
+    $ echo "TRELLO_BOARD_ID=$TRELLO_BOARD_ID" >> .env
 
 ## Getting the Trello API Key
 
