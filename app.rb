@@ -78,15 +78,7 @@ class WebhooksApp < Sinatra::Application
     else
       description = [task['instructions'], '', task_link].join("\n")
       card = create_card(:name => task['name'], :list_id => list.id, :desc => description)
-      begin
-        Trello::Webhook.create(
-          :description => "Watch card #{card.id}",
-          :id_model => card.id,
-          :callback_url => "#{settings.trello_events_url}&task_url=#{task_url}"
-        )
-      rescue Trello::Error
-        raise "Error creating Trello::Webhook for Trello::Card with URL: #{card.short_url}"
-      end
+      create_webhook_for_card(card, :callback_url => "#{settings.trello_events_url}&task_url=#{task_url}")
       card.due = task['due_at']
       begin
         card.update!
@@ -156,5 +148,12 @@ class WebhooksApp < Sinatra::Application
     Trello::Card.create(attributes)
   rescue Trello::Error
     raise "Error creating Trello::Card with name: #{attributes[:name]}"
+  end
+
+  def create_webhook_for_card(card, attributes)
+    attributes.merge!(:description => "Watch card #{card.id}", :id_model => card.id)
+    Trello::Webhook.create(attributes)
+  rescue Trello::Error
+    raise "Error creating Trello::Webhook for Trello::Card with URL: #{card.short_url}"
   end
 end
