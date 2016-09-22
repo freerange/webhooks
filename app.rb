@@ -77,11 +77,7 @@ class WebhooksApp < Sinatra::Application
       card.members.each { |m| remove_member_from_card(m, card) }
     else
       description = [task['instructions'], '', task_link].join("\n")
-      begin
-        card = Trello::Card.create(:name => task['name'], :list_id => list.id, :desc => description)
-      rescue Trello::Error
-        raise "Error creating Trello::Card with name: #{task['name']}"
-      end
+      card = create_card(:name => task['name'], :list_id => list.id, :desc => description)
       begin
         Trello::Webhook.create(
           :description => "Watch card #{card.id}",
@@ -154,5 +150,11 @@ class WebhooksApp < Sinatra::Application
     card.remove_member(member)
   rescue Trello::Error
     raise "Error removing #{member.username} from Trello::Card with URL: #{card.short_url}"
+  end
+
+  def create_card(attributes)
+    Trello::Card.create(attributes)
+  rescue Trello::Error
+    raise "Error creating Trello::Card with name: #{attributes[:name]}"
   end
 end
