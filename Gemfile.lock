@@ -93,7 +93,7 @@ GEM
       json
       oauth (~> 0.4.5)
       rest-client (~> 1.7.2)
-    safe_yaml (1.0.3)
+    safe_yaml (1.0.4)
     sinatra (1.4.5)
       rack (~> 1.4)
       rack-protection (~> 1.4)
