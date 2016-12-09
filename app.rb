@@ -64,6 +64,7 @@ class WebhooksApp < Sinatra::Application
     end
 
     json = request.body.read
+    puts json
     attributes = JSON.parse(json)
 
     assignment = attributes['assignment']
