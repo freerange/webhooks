@@ -6,6 +6,7 @@ set :repository, 'git@github.com:freerange/webhooks.git'
 server 'badger.gofreerange.com', :app
 
 namespace :deploy do
+  desc "Restart the application"
   task :restart do
     as_app "mkdir -p tmp && touch tmp/restart.txt"
   end
