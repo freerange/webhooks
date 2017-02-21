@@ -69,6 +69,28 @@ Ensure you're logged in to Trello as the GFR Admin user. It's safe to run this m
     # Store the members hash in .env
     $ echo "HARMONIA_PERSON_NAMES_VS_TRELLO_MEMBER_IDS='$HARMONIA_PERSON_NAMES_VS_TRELLO_MEMBER_IDS'" >> .env
 
+# Adding a new user
+
+When a new member joins Go Free Range we need to add a mapping between
+their Harmonia and Trello accounts to the production webhooks system.
+
+   # Fetch the environment variables from the production server
+   $ cap env
+
+   # Display the Trello members for the board we're interested in
+   # (replace the `TRELLO_*` variables with those obtained in the
+   # previous step)
+   $ curl "https://api.trello.com/1/boards/$TRELLO_BOARD_ID/members?key=$TRELLO_KEY&token=$TRELLO_TOKEN"
+
+   # Edit the `HARMONIA_PERSON_NAMES_VS_TRELLO_MEMBER_IDS` variable to
+   # add the mapping for the new user. This will involve adding a
+   # key:value pair to the ruby hash stored in this variable,
+   # e.g. "Chris Lowis":"12345"
+   $ cap env:edit
+
+   # Restart the application
+   $ cap deploy:restart
+
 # Deployment
 
 ## Using recap to deploy
