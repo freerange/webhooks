@@ -108,4 +108,6 @@ Assuming you have something like the harmonia-assignment.example.json in this pr
 
     $ curl -XPOST -d@harmonia-assignment.example.json "http://webhooks.gofreerange.com/harmonia/assignments?token=abc123"
 
-You'll see a response containing "OK" if everything is hooked up correctly.
+Where `abc123` is the `AUTHENTICATION_TOKEN` set on the server in the
+step above. You'll see a response containing "OK" if everything is
+hooked up correctly.
