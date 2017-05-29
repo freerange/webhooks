@@ -35,6 +35,7 @@ describe 'Harmonia Assignments' do
 
   it 'updates the newly created Trello card corresponding to the Harmonia task' do
     expect(card).to receive(:due=).with(task[:due_at])
+    expect(card).to receive(:pos=).with('bottom')
     expect(card).to receive(:update!)
 
     post path, body
@@ -43,14 +44,6 @@ describe 'Harmonia Assignments' do
   it 'adds the assignee as a member of the newly created Trello card' do
     member = app.settings.harmonia_person_names_vs_trello_members[person[:name]]
     expect(card).to receive(:add_member).with(member)
-
-    post path, body
-  end
-
-  it 'sorts the cards into chronological order' do
-    trello_card_sorter = double(:trello_card_sorter)
-    allow(TrelloCardSorter).to receive(:new).and_return(trello_card_sorter)
-    expect(trello_card_sorter).to receive(:sort!)
 
     post path, body
   end
