@@ -10,7 +10,6 @@ require 'json'
 
 require_relative 'lib/harmonia'
 require_relative 'lib/trello_event'
-require_relative 'lib/trello_card_sorter'
 
 Dotenv.load
 
@@ -81,8 +80,7 @@ class WebhooksApp < Sinatra::Application
       description = [task['instructions'], '', task_link].join("\n")
       card = create_card(:name => task['name'], :list_id => list.id, :desc => description)
       create_webhook_for_card(card, :callback_url => "#{settings.trello_events_url}&task_url=#{task_url}")
-      update_card(card, :due => task['due_at'])
-      TrelloCardSorter.new(list.refresh!).sort!
+      update_card(card, :due => task['due_at'], pos: 'bottom')
     end
     add_member_to_card(member, card)
 
