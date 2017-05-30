@@ -113,7 +113,7 @@ $ cap deploy:restart
 
 ## Set the webhooks user's shell to bash
 
-    $ # So that Passenger can pick up environment vars from .profile
+    # So that Passenger can pick up environment vars from .profile
     root$ chsh -s /bin/bash webhooks
 
 ## Setting the Trello/Harmonia environment variables
