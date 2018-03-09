@@ -1,3 +1,5 @@
+**We've been happily using [Harmonia's built-in Trello integration](https://harmonia.io/#features) for some time now instead of this app and so we've archived this repository**
+
 # Generating/storing the tokens you need to use this app
 
 ## Getting the ID of the Trello board we're interested in
